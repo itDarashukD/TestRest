@@ -2,11 +2,12 @@ package com.darashuk.spring.rest.controllers;
 
 
 import com.darashuk.spring.rest.entity.Employee;
+import com.darashuk.spring.rest.exeption_handler.EmployeeIncorrectData;
+import com.darashuk.spring.rest.exeption_handler.NoSuchEmployeeExeption;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.darashuk.spring.rest.services.IEmployeeService;
 
 import java.util.List;
@@ -32,7 +33,24 @@ public class MyRestController {
     public Employee getEmployee(@PathVariable int id){
         Employee employee = employeeService.getById(id);
 
+        if (employee == null) {
+            throw new NoSuchEmployeeExeption("there no employee with "+id+" in DB");
+        }
         return employee;
+    }
+
+    //метод обработчик исключений  - если нет такого id
+    //при срабатывании Exception - оно передается в параметры метода, дальше в объект нами созданного класса,
+    // дальше в объект класса ResponseEntity
+
+    @ExceptionHandler
+    public ResponseEntity<EmployeeIncorrectData> handlException(Exception exception){
+
+        EmployeeIncorrectData incorrectData = new EmployeeIncorrectData();
+        incorrectData.setInfo(exception.getMessage());
+
+        return new ResponseEntity<>(incorrectData, HttpStatus.NOT_ACCEPTABLE);
+
     }
 
 
