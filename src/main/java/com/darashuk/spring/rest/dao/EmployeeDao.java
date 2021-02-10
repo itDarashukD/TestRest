@@ -25,14 +25,13 @@ public class EmployeeDao implements IEmployeeDao {
         Session session = sessionFactory.getCurrentSession();
         List<Employee>employeeList = session.createQuery("from Employee",Employee.class).getResultList();
 
-
         return employeeList;
     }
 
     @Override
     public void save(Employee employee) {
         Session session = sessionFactory.getCurrentSession();
-        session.save(employee);
+        session.saveOrUpdate(employee);
     }
 
     @Override

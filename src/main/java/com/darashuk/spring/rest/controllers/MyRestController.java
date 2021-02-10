@@ -33,24 +33,25 @@ public class MyRestController {
     public Employee getEmployee(@PathVariable int id){
         Employee employee = employeeService.getById(id);
 
-        if (employee == null) {
+        if (employee == null) {// а он равен нулл когда такого значения нет в БД
             throw new NoSuchEmployeeExeption("there no employee with "+id+" in DB");
         }
         return employee;
     }
 
-    //метод обработчик исключений  - если нет такого id
-    //при срабатывании Exception - оно передается в параметры метода, дальше в объект нами созданного класса,
-    // дальше в объект класса ResponseEntity
+    @PostMapping("employees")
+    public Employee   addNewEmployee(@RequestBody Employee employee){
 
-    @ExceptionHandler
-    public ResponseEntity<EmployeeIncorrectData> handlException(Exception exception){
+        employeeService.save(employee);
+        return employeeService.getById(employee.getId());
+    }
 
-        EmployeeIncorrectData incorrectData = new EmployeeIncorrectData();
-        incorrectData.setInfo(exception.getMessage());
+    @PutMapping("employees")
+    public Employee updateEmployee(@RequestBody Employee employee){
 
-        return new ResponseEntity<>(incorrectData, HttpStatus.NOT_ACCEPTABLE);
+        employeeService.save(employee);
 
+        return employeeService.getById(employee.getId());
     }
 
 
